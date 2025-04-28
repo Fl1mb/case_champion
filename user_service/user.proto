@@ -1,0 +1,50 @@
+syntax="proto3";
+
+package user_service;
+
+
+service UserService{
+    //Создание пользователя
+    rpc CreateUser(CreateUserRequest) returns (UserResponse);
+
+    //Авторизация пользователя (если он уже есть)
+    rpc Login(LoginRequest) returns (LoginResponse);
+
+    //Получение информации о пользователе
+    rpc GetUser(GetUserRequest) returns (UserResponse);
+
+}
+
+//Запрос на создание пользователя
+message CreateUserRequest{
+    string username = 1;
+    string email = 2;
+    string password = 3;
+    string full_name = 4;
+}
+
+//Запрос на данные о пользователе
+message GetUserRequest{
+    int32 id = 1;
+}
+
+//Ответ на регистрацию
+message UserResponse{
+    string error = 1;
+    optional int32 id = 2;
+    optional string username = 3;
+    optional string email = 4;
+    optional string full_name = 5;
+}
+
+//Запрос на авторизацию
+message LoginRequest{
+    string username = 1;
+    string password = 2;
+}
+
+//ответ на авторизацию
+message LoginResponse{
+    string access_token = 1;
+}
+

@@ -1,0 +1,107 @@
+services:
+  database:
+    image: postgres:17.4
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER : admin
+      POSTGRES_PASSWORD : admin
+      POSTGRES_DB : database
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=en_US.UTF-8"
+      POSTGRES_HOST_AUTH_METHOD : trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/database
+    networks:
+      - postgres_network
+  
+  api_service:
+    build:
+      context: ./api_service
+      dockerfile: Dockerfile
+    ports:
+      - "3723:3723"
+    networks:
+      - postgres_network
+    depends_on:
+      - user_service
+  user_service:
+    build: 
+      context: ./user_service
+      dockerfile: Dockerfile
+    ports:
+      - "7827:50051"
+    networks:
+      - postgres_network
+    depends_on:
+      - database
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:6.19
+
+    depends_on:
+      - database
+    
+    environment:
+      PGADMIN_DEFAULT_EMAIL: danila@mail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:5050"
+    networks:
+      - postgres_network
+    
+  
+  cache:
+    image: redis:latest
+    container_name: cache_container
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - redis_network
+    environment:
+      - REDIS_PASSWORD=admin
+    command: redis-server --requirepass admin
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+  
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana:/etc/grafana/provisioning/datasources
+    
+
+volumes:
+  postgres_data:
+  redis_data:
+  prom_data:
+  pgadmin:
+  
+
+networks:
+  postgres_network:
+    driver: bridge
+  redis_network:
+    driver: bridge
