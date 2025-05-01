@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package cache_service;
+option go_package = "./internal/grpc/grpc_server";
+
+service CacheService{
+    //Write jwt key to cache
+    rpc Write(WriteRequest) returns (WriteResponse);
+
+    //Get user_id & login from cache if exists
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+
+    //Delete user from cache
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse); 
+}
+
+message WriteRequest{
+    int32 user_id = 1;
+    string user_login = 2;
+    string jwt_key = 3;
+}
+
+message WriteResponse{
+    bool success = 1;
+    optional string error = 2;
+}
+
+message GetUserRequest{
+    string jwt_key = 1;
+}
+
+message GetUserResponse{
+    bool success = 1;
+    string user_login = 2;
+    int32 user_id = 3;
+}
+
+message DeleteUserRequest{
+    int32 user_id = 1;
+    string jwt_key = 2;
+}
+
+message DeleteUserResponse{
+    bool success = 1;
+    optional string error = 2;
+}

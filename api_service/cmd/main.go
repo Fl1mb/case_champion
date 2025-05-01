@@ -2,6 +2,7 @@ package main
 
 import (
 	"api_service/internal/grpc/server/user_grpc"
+	grpccache "api_service/internal/grpc_cache"
 	grpcclient "api_service/internal/grpc_client"
 	task_server "api_service/internal/grpc_task"
 	taskclient "api_service/internal/grpc_task/task_client"
@@ -29,6 +30,13 @@ func main() {
 	}
 	log.Println("Connected to task_service:50052")
 	defer task_service.Close()
+
+	cache_service, err := grpccache.NewCacheClient("cache_service:50053")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("Connected to cache_service:50053")
+	defer cache_service.Close()
 
 	http.HandleFunc("/task/CreateFolder", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
