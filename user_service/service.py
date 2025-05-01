@@ -109,6 +109,7 @@ class UserService(user_grpc.UserServiceServicer):
             logger.info(f"User {request.username} authenticated successfully")
             return pb2.LoginResponse(
                 access_token=access_token,
+                user_id=user.id,
             )
             
         except Exception as e:

@@ -47,5 +47,6 @@ message LoginRequest{
 //ответ на авторизацию
 message LoginResponse{
     string access_token = 1;
+    int32 user_id = 2;
 }
 

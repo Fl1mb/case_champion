@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x0cuser_service\"Y\n\x11\x43reateUserRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\x12\x11\n\tfull_name\x18\x04 \x01(\t\"\x1c\n\x0eGetUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\x9d\x01\n\x0cUserResponse\x12\r\n\x05\x65rror\x18\x01 \x01(\t\x12\x0f\n\x02id\x18\x02 \x01(\x05H\x00\x88\x01\x01\x12\x15\n\x08username\x18\x03 \x01(\tH\x01\x88\x01\x01\x12\x12\n\x05\x65mail\x18\x04 \x01(\tH\x02\x88\x01\x01\x12\x16\n\tfull_name\x18\x05 \x01(\tH\x03\x88\x01\x01\x42\x05\n\x03_idB\x0b\n\t_usernameB\x08\n\x06_emailB\x0c\n\n_full_name\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"%\n\rLoginResponse\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x01 \x01(\t2\xdf\x01\n\x0bUserService\x12I\n\nCreateUser\x12\x1f.user_service.CreateUserRequest\x1a\x1a.user_service.UserResponse\x12@\n\x05Login\x12\x1a.user_service.LoginRequest\x1a\x1b.user_service.LoginResponse\x12\x43\n\x07GetUser\x12\x1c.user_service.GetUserRequest\x1a\x1a.user_service.UserResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nuser.proto\x12\x0cuser_service\"Y\n\x11\x43reateUserRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\x12\x11\n\tfull_name\x18\x04 \x01(\t\"\x1c\n\x0eGetUserRequest\x12\n\n\x02id\x18\x01 \x01(\x05\"\x9d\x01\n\x0cUserResponse\x12\r\n\x05\x65rror\x18\x01 \x01(\t\x12\x0f\n\x02id\x18\x02 \x01(\x05H\x00\x88\x01\x01\x12\x15\n\x08username\x18\x03 \x01(\tH\x01\x88\x01\x01\x12\x12\n\x05\x65mail\x18\x04 \x01(\tH\x02\x88\x01\x01\x12\x16\n\tfull_name\x18\x05 \x01(\tH\x03\x88\x01\x01\x42\x05\n\x03_idB\x0b\n\t_usernameB\x08\n\x06_emailB\x0c\n\n_full_name\"2\n\x0cLoginRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"6\n\rLoginResponse\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x32\xdf\x01\n\x0bUserService\x12I\n\nCreateUser\x12\x1f.user_service.CreateUserRequest\x1a\x1a.user_service.UserResponse\x12@\n\x05Login\x12\x1a.user_service.LoginRequest\x1a\x1b.user_service.LoginResponse\x12\x43\n\x07GetUser\x12\x1c.user_service.GetUserRequest\x1a\x1a.user_service.UserResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -40,7 +40,7 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_LOGINREQUEST']._serialized_start=309
   _globals['_LOGINREQUEST']._serialized_end=359
   _globals['_LOGINRESPONSE']._serialized_start=361
-  _globals['_LOGINRESPONSE']._serialized_end=398
-  _globals['_USERSERVICE']._serialized_start=401
-  _globals['_USERSERVICE']._serialized_end=624
+  _globals['_LOGINRESPONSE']._serialized_end=415
+  _globals['_USERSERVICE']._serialized_start=418
+  _globals['_USERSERVICE']._serialized_end=641
 # @@protoc_insertion_point(module_scope)
