@@ -24,6 +24,7 @@ services:
       - postgres_network
     depends_on:
       - user_service
+      - task_service
   user_service:
     build: 
       context: ./user_service
@@ -34,7 +35,17 @@ services:
       - postgres_network
     depends_on:
       - database
-
+  task_service:
+    build: 
+      context: ./task_service
+      dockerfile: Dockerfile
+    ports:
+      - ":50052"
+    networks:
+      - postgres_network
+    depends_on:
+      - database
+  
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:6.19

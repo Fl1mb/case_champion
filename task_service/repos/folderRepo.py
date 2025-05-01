@@ -40,7 +40,7 @@ class FolderRepo:
         ).first()
 
         if folder:
-            folder.name = folder_data.new_folder_name
+            folder.name = folder_data.folder_name
             db.commit()
             db.refresh(folder)
         return folder

@@ -48,13 +48,13 @@ class FolderBase(BaseModel):
     )
 
 class FolderCreate(FolderBase):
-    user_id: int = Field(..., description=USER_ID_DESC)
+    user_id: int = Field(...)
     folder_name : str = Field(..., min_length=1, max_length=50)
 
 class FolderUpdate(FolderBase):
     user_id: int = Field(..., description=USER_ID_DESC)
     folder_id: int = Field(..., description="ID папки")
-    new_folder_name: str = Field(..., min_length=1, max_length=50, description=FOLDER_NAME_DESC)
+    folder_name: str = Field(..., min_length=1, max_length=50)
 
 class FolderDelete(BaseModel):
     user_id: int = Field(..., description=USER_ID_DESC)

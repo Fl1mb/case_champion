@@ -1,0 +1,194 @@
+syntax = "proto3";
+
+package task_service;
+option go_package = "./internal/grpc/server/task_server";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+service TaskService {
+    // Global methods
+    rpc GetUserFolders(GetFoldersRequest) returns (GetFoldersResponse);
+    rpc GetAllTasks(GetAllTasksRequest) returns (GetAllTasksResponse);
+    rpc ToggleTaskCompletion(ToggleTaskRequest) returns (TaskResponse);
+    rpc MoveTaskToFolder(MoveTaskRequest) returns (TaskResponse);
+    rpc SearchTasks(SearchTasksRequest) returns (SearchTasksResponse);
+
+    // Folder operations
+    rpc CreateFolder(CreateFolderRequest) returns (CreateFolderResponse);
+    rpc UpdateFolder(UpdateFolderRequest) returns (UpdateFolderResponse);
+    rpc GetFolder(GetFolderRequest) returns (GetFolderResponse);
+    rpc DeleteFolder(DeleteFolderRequest) returns (DeleteFolderResponse);
+
+    // Task operations
+    rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+    rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+    rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+    rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+}
+
+// Pagination
+message Pagination {
+    int32 limit = 1 [(validate.rules).int32 = {gte: 1, lte: 100}];
+    int32 offset = 2;
+}
+
+// Folder messages
+message Folder {
+    int32 folder_id = 1;
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+    string name = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
+    google.protobuf.Timestamp created_at = 4;
+    repeated int32 task_ids = 5;
+}
+
+message GetFoldersRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+}
+
+message GetFoldersResponse {
+    repeated Folder folders = 1;
+}
+
+message GetFolderRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    int32 folder_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message GetFolderResponse {
+    bool success = 1;
+    Folder folder = 2;
+}
+
+message CreateFolderRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    string name = 2 [(validate.rules).string = {min_len: 1, max_len: 50}];
+}
+
+message CreateFolderResponse {
+    bool success = 1;
+    Folder folder = 2;
+}
+
+message UpdateFolderRequest {
+    int32 folder_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+    string new_name = 3 [(validate.rules).string = {min_len: 1, max_len: 50}];
+}
+
+message UpdateFolderResponse {
+    bool success = 1;
+    Folder folder = 2;
+}
+
+message DeleteFolderRequest {
+    int32 folder_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message DeleteFolderResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+// Task messages
+message Task {
+    int32 task_id = 1;
+    int32 folder_id = 2 [(validate.rules).int32.gt = 0];
+    int32 user_id = 3 [(validate.rules).int32.gt = 0];
+    string title = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
+    string description = 5 [(validate.rules).string.max_len = 500];
+    google.protobuf.Timestamp due_time = 6;
+    int32 priority = 7 [(validate.rules).int32 = {gte: 1, lte: 5}];
+    bool is_completed = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+}
+
+message CreateTaskRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    int32 folder_id = 2 [(validate.rules).int32.gt = 0];
+    string title = 3 [(validate.rules).string = {min_len: 1, max_len: 100}];
+    string description = 4 [(validate.rules).string.max_len = 500];
+    google.protobuf.Timestamp due_time = 5;
+    int32 priority = 6 [(validate.rules).int32 = {gte: 1, lte: 5}];
+}
+
+message CreateTaskResponse {
+    bool success = 1;
+    Task task = 2;
+}
+
+message GetTaskRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    int32 task_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message GetTaskResponse {
+    bool success = 1;
+    Task task = 2;
+}
+
+message UpdateTaskRequest {
+    int32 task_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+    optional int32 folder_id = 3 [(validate.rules).int32.gt = 0];
+    optional string title = 4 [(validate.rules).string = {min_len: 1, max_len: 100}];
+    optional string description = 5 [(validate.rules).string.max_len = 500];
+    optional google.protobuf.Timestamp due_time = 6;
+    optional int32 priority = 7 [(validate.rules).int32 = {gte: 1, lte: 5}];
+}
+
+message UpdateTaskResponse {
+    bool success = 1;
+    Task task = 2;
+}
+
+message DeleteTaskRequest {
+    int32 task_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message DeleteTaskResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+message ToggleTaskRequest {
+    int32 task_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+}
+
+message TaskResponse {
+    Task task = 1;
+}
+
+message MoveTaskRequest {
+    int32 task_id = 1 [(validate.rules).int32.gt = 0];
+    int32 user_id = 2 [(validate.rules).int32.gt = 0];
+    int32 new_folder_id = 3 [(validate.rules).int32.gt = 0];
+}
+
+message SearchTasksRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    string query = 2 [(validate.rules).string.min_len = 1];
+    optional bool completed = 3;
+    optional int32 priority = 4 [(validate.rules).int32 = {gte: 1, lte: 5}];
+    optional google.protobuf.Timestamp due_before = 5;
+    Pagination pagination = 6;
+}
+
+message SearchTasksResponse {
+    repeated Task tasks = 1;
+    int32 total_count = 2;
+}
+
+message GetAllTasksRequest {
+    int32 user_id = 1 [(validate.rules).int32.gt = 0];
+    optional int32 folder_id = 2;
+}
+
+message GetAllTasksResponse {
+    repeated Task tasks = 1;
+    int32 total_count = 2;
+}

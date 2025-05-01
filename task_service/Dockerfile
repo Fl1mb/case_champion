@@ -38,5 +38,12 @@ RUN python -m grpc_tools.protoc \
     --grpc_python_out=/app \
     /app/proto/task.proto
 
+RUN python -m grpc_tools.protoc \
+    -I/app/proto \
+    -I/app \
+    --python_out=/app \
+    --grpc_python_out=/app \
+    /app/proto/validate/validate.proto
+
 # Запускаем приложение
 CMD ["python", "./main.py"]

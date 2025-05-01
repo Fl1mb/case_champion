@@ -1,2 +1,5 @@
 /user_service/venv
 /task_service/venv
+/task_service/repos/models.py
+/task_service/repos/schemas.py
+/task_service/repos/testRepo.py

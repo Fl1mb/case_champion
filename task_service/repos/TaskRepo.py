@@ -45,8 +45,8 @@ class TaskRepo:
         ).first()
         
         if task:
-            task.title = task_data.new_title
-            task.description = task_data.new_description
+            task.title = task_data.title
+            task.description = task_data.description
             task.due_time = task_data.due_time
             task.priority = task_data.priority
             task.folder_id = task_data.folder_id
@@ -61,7 +61,7 @@ class TaskRepo:
             Task.task_id == task_data.task_id,
             Task.user_id == task_data.user_id,
             Task.folder_id == task_data.folder_id
-        ).first
+        ).first()
 
         if not task:
             return False

@@ -10,7 +10,7 @@ class TaskFolder(Base):
     __tablename__ = "folders"
 
     folder_id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, nullable=False)  # Без ForeignKey!
+    user_id = Column(Integer, nullable=False)  
     name = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now())
 
@@ -29,8 +29,7 @@ class Task(Base):
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(), onupdate=datetime.now())
 
-    # relations
-    folder = relationship("TaskFolder", back_populates="tasks")
+
 
     
 

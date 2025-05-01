@@ -23,9 +23,9 @@ def serve():
     db = database.SessionLocal()
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     task_pb2_grpc.add_TaskServiceServicer_to_server(TaskService(db), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port('[::]:50052')
     server.start()
-    logger.info("Server started on port 50051")
+    logger.info("Server started on port 50052")
     
     try:
         server.wait_for_termination()
@@ -446,7 +446,6 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
             user_id=folder.user_id,
             name=folder.name,
             created_at=self._datetime_to_proto(folder.created_at),
-            task_ids=[t.task_id for t in folder.tasks]
         )
     
     def _task_to_proto(self, task: Task) -> task_pb2.Task:
@@ -468,13 +467,15 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
         """Convert datetime to protobuf Timestamp"""
         if not dt:
             return None
-        return task_pb2.Timestamp(seconds=int(dt.timestamp()))
-    
+        timestamp = Timestamp()
+        timestamp.FromDatetime(dt)
+        return timestamp
+
     def _proto_to_datetime(self, ts: Timestamp) -> Optional[datetime]:
         """Convert protobuf Timestamp to datetime"""
         if not ts:
             return None
-        return datetime.fromtimestamp(ts.seconds)
+        return ts.ToDatetime()
 
     
 
