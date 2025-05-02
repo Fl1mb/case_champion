@@ -322,9 +322,11 @@ func (h *TaskServiceHandler) UpdateTask(w http.ResponseWriter, r *http.Request) 
 	title := task.Title
 	desc := task.Description
 	prt := task.Priority
+	folder_id := task.FolderID
 	req := &task_server.UpdateTaskRequest{
 		TaskId:      int32(taskID),
 		UserId:      userID,
+		FolderId:    &folder_id,
 		Title:       &title,
 		Description: &desc,
 		Priority:    &prt,

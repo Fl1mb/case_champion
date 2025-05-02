@@ -69,7 +69,7 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                 FolderUpdate(
                     user_id=request.user_id,
                     folder_id=request.folder_id,
-                    new_folder_name=request.new_name
+                    folder_name=request.new_name
                 )
             )
             if not folder:
@@ -165,6 +165,8 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                 request.user_id, 
                 request.task_id
             )
+
+            logger.info(f'user_id={request.user_id}, task_id={request.task_id}')
             if not task:
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return task_pb2.GetTaskResponse(success=False)
@@ -188,8 +190,8 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                     task_id=request.task_id,
                     user_id=request.user_id,
                     folder_id=request.folder_id,
-                    new_title=request.title,
-                    new_description=request.description,
+                    title=request.title,
+                    description=request.description,
                     due_time=self._proto_to_datetime(request.due_time),
                     priority=request.priority
                 )
@@ -329,6 +331,7 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                 request.user_id, 
                 request.task_id
             )
+            logger.info(f'user_id={request.user_id}, task_id={request.task_id}')
             if not task:
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return task_pb2.TaskResponse()
@@ -352,6 +355,7 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                 request.user_id, 
                 request.task_id
             )
+            logger.info(f'user_id={request.user_id}, task_id={request.task_id}')
             if not task:
                 context.set_code(grpc.StatusCode.NOT_FOUND)
                 return task_pb2.TaskResponse()
@@ -373,8 +377,8 @@ class TaskService(task_pb2_grpc.TaskServiceServicer):
                     task_id=request.task_id,
                     user_id=request.user_id,
                     folder_id=request.new_folder_id,
-                    new_title=task.title,
-                    new_description=task.description,
+                    title=task.title,
+                    description=task.description,
                     due_time=task.due_time,
                     priority=task.priority
                 )
