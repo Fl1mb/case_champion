@@ -13,13 +13,48 @@ services:
       - postgres_data:/var/lib/postgresql/database
     networks:
       - postgres_network
-  
+
+  postgres_exporter:
+    image: prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://admin:admin@database:5432/database?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - database
+    networks:
+      - postgres_network
+
+  redis_exporter:
+    image: oliver006/redis_exporter
+    environment:
+      REDIS_ADDR: "cache:6379"
+      REDIS_PASSWORD: "admin"
+    ports:
+      - "9121:9121"
+    depends_on:
+      - cache
+    networks:
+      - redis_network
+  blackbox:
+    image: prom/blackbox-exporter
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./blackbox:/config
+    command:
+      - '--config.file=/config/blackbox.yml'  
+    networks:
+      - postgres_network
+      - redis_network
+
   api_service:
     build:
       context: ./api_service
       dockerfile: Dockerfile
     ports:
       - "3723:3723"
+      - "8051:8051"
     networks:
       - postgres_network
       - redis_network
@@ -31,7 +66,8 @@ services:
       context: ./user_service
       dockerfile: Dockerfile
     ports:
-      - "7827:50051"
+      - ":50051"
+      - "8053:8053"
     networks:
       - postgres_network
     depends_on:
@@ -42,6 +78,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - ":50052"
+      - ":8054"
     networks:
       - postgres_network
     depends_on:
@@ -53,31 +90,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - ":50053"
+      - ":8052"
     networks:
       - redis_network
     depends_on:
-      - cache
-
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4:6.19
-
-    depends_on:
-      - database
-    
-    environment:
-      PGADMIN_DEFAULT_EMAIL: danila@mail.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-
-    volumes:
-      - ./pgadmin:/var/lib/pgadmin
-    ports:
-      - "5050:5050"
-    networks:
-      - postgres_network
-    
-  
+      - cache  
   cache:
     image: redis:latest
     container_name: cache_container
@@ -102,6 +119,9 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - prom_data:/prometheus
+    networks:
+      - postgres_network
+      - redis_network
   
   grafana:
     image: grafana/grafana
@@ -109,18 +129,23 @@ services:
     ports:
       - 3000:3000
     restart: unless-stopped
+    depends_on:
+      - prometheus
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana
+    networks:
+      - postgres_network
+      - redis_network
     volumes:
-      - ./grafana:/etc/grafana/provisioning/datasources
-    
+      - ./grafana/provisioning:/etc/grafana/provisioning:z
+      - grafana_data:/var/lib/grafana
 
 volumes:
   postgres_data:
+  grafana_data:
   redis_data:
   prom_data:
-  pgadmin:
   
 
 networks:

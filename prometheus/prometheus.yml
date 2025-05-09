@@ -1,7 +1,57 @@
 global:
   scrape_interval: 15s
+  evaluation_interval: 15s
 
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
+
+  - job_name: 'api_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['api_service:8051']
+
+  - job_name: 'user_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['user_service:8053']
+
+  - job_name: 'task_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['task_service:8054']
+
+  - job_name: 'cache_service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['cache_service:8052']
+
+  - job_name: 'postgres_exporter'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
+
+  - job_name: 'redis_exporter'
+    static_configs:
+      - targets: ['redis_exporter:9121']
+
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - 'http://api_service:8051/health'
+          - 'http://user_service:8053/health'
+          - 'http://task_service:8054/health'
+          - 'http://cache_service:8052/health'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+rule_files:
+  - 'recording_rules.yml'

@@ -81,8 +81,8 @@ func (h *TaskServiceHandler) RegisterRoutes(r chi.Router) {
 			r.Get("/", h.GetTask)
 			r.Put("/", h.UpdateTask)
 			r.Delete("/", h.DeleteTask)
-			r.Patch("/toggle", h.ToggleTaskCompletion)
-			r.Patch("/move", h.MoveTaskToFolder)
+			r.Put("/toggle", h.ToggleTaskCompletion)
+			r.Put("/move", h.MoveTaskToFolder)
 		})
 		r.Get("/search", h.SearchTasks)
 	})
@@ -221,8 +221,7 @@ func (h *TaskServiceHandler) GetFolderTasks(w http.ResponseWriter, r *http.Reque
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"tasks":       resp.Tasks,
-		"total_count": resp.TotalCount,
+		"tasks": resp.Tasks,
 	})
 }
 
@@ -253,8 +252,7 @@ func (h *TaskServiceHandler) GetAllTasks(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"tasks":       resp.Tasks,
-		"total_count": resp.TotalCount,
+		"tasks": resp.Tasks,
 	})
 }
 
