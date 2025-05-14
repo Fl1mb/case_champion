@@ -13,6 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/database
     networks:
       - postgres_network
+  
 
   postgres_exporter:
     image: prometheuscommunity/postgres-exporter
@@ -106,7 +107,7 @@ services:
       - redis_network
     environment:
       - REDIS_PASSWORD=admin
-    command: redis-server --requirepass admin
+    command: redis-server --requirepass admin 
 
   prometheus:
     image: prom/prometheus
@@ -122,6 +123,40 @@ services:
     networks:
       - postgres_network
       - redis_network
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+    networks:
+      - postgres_network
+      - redis_network
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    ports:
+      - 9093:9093
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - postgres_network
+      - redis_network
+    depends_on:
+      - prometheus
   
   grafana:
     image: grafana/grafana
@@ -146,6 +181,7 @@ volumes:
   grafana_data:
   redis_data:
   prom_data:
+  alertmanager_data:
   
 
 networks:

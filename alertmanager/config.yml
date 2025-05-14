@@ -1,0 +1,18 @@
+route:
+  group_by: [alertname]
+  receiver: 'gmail-notifications'
+
+receivers:
+- name: 'gmail-notifications'
+  email_configs:
+  - to: 'danila.rylov2005@mail.ru'
+    from: 'cempionatkejs@gmail.com'
+    smarthost: 'smtp.gmail.com:587'
+    auth_username: 'acempionatkejs@gmail.com'
+    auth_password: 'Danila28072005'  
+    headers:
+      Subject: '[Alert] {{ .Status | toUpper }}: {{ .CommonAnnotations.summary }}'
+    html: |
+      <h2>{{ .CommonAnnotations.summary }}</h2>
+      <p><b>Status:</b> {{ .Status | toUpper }}</p>
+      <p><b>Details:</b><br/>{{ .CommonAnnotations.description }}</p>
