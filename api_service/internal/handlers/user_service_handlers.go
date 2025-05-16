@@ -7,7 +7,10 @@ import (
 	grpcclient "api_service/internal/grpc_client"
 	"api_service/internal/models"
 	"encoding/json"
+	"math/rand"
 	"net/http"
+	"runtime"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -20,6 +23,7 @@ type UserAuthHandler struct {
 func (h *UserAuthHandler) RegisterRoutes(r chi.Router) {
 	r.Post("/register", h.Register)
 	r.Post("/login", h.Login)
+	r.Get("/crash", h.Crash)
 }
 
 func (h *UserAuthHandler) Register(w http.ResponseWriter, r *http.Request) {
@@ -119,6 +123,35 @@ func (h *UserAuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{
 		"access_token": loginResp.AccessToken,
 	})
+}
+
+func (h *UserAuthHandler) Crash(w http.ResponseWriter, r *http.Request) {
+	// Шаг 1: Нагружаем CPU на 100% на 5 секунд
+	done := make(chan bool)
+	cores := runtime.NumCPU()
+	runtime.GOMAXPROCS(cores)
+
+	for i := 0; i < cores; i++ {
+		go func() {
+			for {
+				select {
+				case <-done:
+					return
+				default:
+					// Бесконечные вычисления для нагрузки CPU
+					_ = rand.Intn(10000000) * rand.Intn(1000000)
+
+				}
+			}
+		}()
+	}
+
+	// Даем нагрузке поработать 5 секунд
+	time.Sleep(5 * time.Second)
+	close(done) // Останавливаем нагрузку
+
+	// Шаг 2: Вызываем паникy для краша приложения
+	panic("Simulated crash for AlertManager testing")
 }
 
 func (h *UserAuthHandler) handleGRPCError(w http.ResponseWriter, err error) {

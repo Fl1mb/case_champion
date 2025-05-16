@@ -120,7 +120,7 @@ def monitor_services(compose_file: str, check_interval: int = 30):
 
 if __name__ == "__main__":
     COMPOSE_FILE = 'docker-compose.yml'
-    CHECK_INTERVAL = 30
+    CHECK_INTERVAL = 5
     
     if deploy_docker_compose(COMPOSE_FILE):
         monitor_services(COMPOSE_FILE, CHECK_INTERVAL)
